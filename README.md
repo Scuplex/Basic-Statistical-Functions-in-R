@@ -19,6 +19,12 @@ The following distributions are implemented and validated:
 | **Cauchy** | $m=1, \kappa=2$ | Inverse CDF | Heavy tails, truncated for visualization (`|X| \le 30$). |
 | **Laplace** | $\mu=2, \kappa=3$ | Sum of Exponentials (Alternative) | Uses transformation of two independent Exponential variables. |
 
+### Visual Validation
+
+A screenshot of the six generated plots, showing the histogram samples perfectly aligned with the theoretical PDF (red line):
+
+![Composite Plot of Inverse CDF Samples with PDF Overlay](hist.png)
+
 ### R Implementation Details
 
 * The `par(mfrow = c(2, 3))` command is used to display all six validation plots simultaneously in a single image output.
