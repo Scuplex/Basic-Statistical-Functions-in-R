@@ -1,99 +1,82 @@
-# Different distributions Inverse CDF
+# Plot setup and variable
+par(mfrow = c(2, 3))
 
-#expontential
-U <- runif(1e5,0,1)
-lambda <-0.1
-EXDIST <- -log(1-U) / lambda
+# 1) Exponential Inverse CDF
+lambda <- 0.1
+U <- runif(1e7)
+EXDIST <- -log(1-U) / lambda 
 
-#Pareto
+x_grid <- seq(0, max(EXDIST), length.out = 1000)
+Expo_pdf <- lambda * exp(-lambda * x_grid) 
+
+hist(EXDIST, breaks = 65, prob = TRUE, main = "Exponential", xlab = "")
+lines(x_grid, Expo_pdf, col = "red", lwd = 2)
+
+# 2) Pareto Inverse CDF
 alpha <- 20
 sigma <- 1
-U <- runif(1e5,0,1)
-PAREDIST <- sigma / ( (1 - U)^(1 / alpha) )
-hist(PAREDIST,1000)
+U <- runif(1e7)
+PAREDIST <- sigma / ((1 - U)^(1 / alpha))
 
-#power-util function
+x_grid <- seq(sigma, max(PAREDIST), length.out = 1000)
+Pareto_pdf <- (alpha * sigma^alpha) / (x_grid^(alpha + 1))
+
+hist(PAREDIST, breaks = 70, prob = TRUE, main = "Pareto", xlab = "")
+lines(x_grid, Pareto_pdf, col = "red", lwd = 2)
+
+# 3) PowerUtility Inverse CDF
 kappa <- 5
 delta <- 2
-U <- runif(1e5,0,1)
+U <- runif(1e7)
 POWERDIST <- kappa * U^(1 / delta)
-hist(POWERDIST,1000)
 
-#beta
-pi <- 3.14
-U <- runif(1e5,0,1)
-BETADIST <- sin(2/pi*U)^2
-hist(BETADIST,1000)
+x_grid <- seq(0, kappa, length.out = 1000)
+Power_pdf <- (delta / (kappa^delta)) * x_grid^(delta - 1) 
 
-#cauchy
-m <- 1
-kappa <- 10
-pi <- 3.14
-U <- runif(1e5,0,1)
-CAUCHYDIST <- m + kappa*tan(pi*(U-1/2))
-hist(CAUCHYDIST,1000)
-
-# university
-
-# Monte carlo gia selida 6
-
-M <- 1e6
-
-U <- runif(M,0,1) # apo tin katanomi u kanw to monte carlo  M einai ta steps opou tha kanei 
-h_U <- 1/ sqrt( U*(1-U) ) # edw pera ipologizw to H apo tin askisi stin selida 4 
-pi_est_I <- mean( h_U ) # edw pera vriskoume ton meso 
-print(pi_est_I)
-cat('π estimate I = ' , pi_est_I , "\n")
-
-
-# Monte carlo gia selida 7
-
-X <- runif(M, -1,1) # paragw to x 1 ekatommirio fores stin omoiomorfi -1,1
-Y <- runif(M, -1,1) # paragw to y 1 ekatommirio fores stin omoiomorfi -1,1
-
-Z <- X^2 + Y^2 # edw vrisko ton arithmo gia to x^2 + y^2 <= 1
-
-W <- (Z<=1) # edw vlepw an peftei mesa i oxi 
-
-pi_est_II <- 4* mean(W) # edw einai o mesos oros *4 gia na ginei i kanonikopoihsi
-cat('π estimate II = ' , pi_est_II , "\n") # emfanizw to apotelesma 
-
-
-# lognormal distribution
-
-M <- 1e6
-X <- rnorm(M, 0.1,0.2)
-Y <- exp(X)
-
-
-mlog <- mean(Y)
-vlog <- var(Y)
-slog <- skewness(Y)
-cat('The variance is = ' , vlog , "\n" , 'The mean is = ', mlog , "\n" , 'The skewness is = ' , slog)
-
-
-print("hello world")
+hist(POWERDIST, breaks = 65, prob = TRUE, main = "PowerUtility", xlab="")
+lines(x_grid, Power_pdf, col = "red", lwd = 2)
 
 
 
+# 4) Beta Inverse CDF
+U <- runif(1e7)
+BETADIST <- sin(pi/2 * U)^2
+G <- 1e4
+
+x_grid <- seq(0, 1, length.out = G)
+Beta_0_5_0_5_pdf <- (1/pi) / sqrt( x_grid * ( 1 - x_grid ) )
+
+hist(BETADIST, breaks = 68, prob = TRUE, main = "Beta(1/2, 1/2)", xlab="")
+lines(x_grid, Beta_0_5_0_5_pdf, col = "red", lwd = 2)
 
 
-# antistrofi sinartisi
-
-lambda <-0.1
-U <- runif(1e6)
-X <- -log(1-U) / lambda
-hist(X,100)
-
-
-
-
- 
-# 5) Cauchy
+# 5) Cauchy Inverse CDF
 m <- 1
 kappa <- 2
-U <- runif(1e6)
+L <- 30
+G <- 1e4
+U <- runif(1e7)
 X <- m + kappa * tan(pi * (U - 1/2))
 X_truncated <- X[abs(X)<=30]
-hist(X_truncated, breaks = 300, xlim =c(m-30,m+30),  main = "Cauchy")
 
+x_grid <- seq(m - L, m + L, length.out = G)
+Cauchy_pdf <- (1 / (pi * kappa)) * 1 / (1 + ((x_grid - m) / kappa)^2)
+
+hist(X_truncated, breaks = 72, xlim = c(m - 30, m + 30),
+     main = "Cauchy", prob = TRUE, xlab="")
+lines(x_grid, Cauchy_pdf, col = "red", lwd = 2)
+
+# 6) Laplace Inverse CDF
+lamda <- 1
+m <-2
+kappa <- 3
+Y1 <- rexp(1e7, lamda)
+Y2 <- rexp(1e7, lamda)
+X <- Y1 - Y2
+LAPLACEDIST <- m + kappa * X
+
+x_grid <- seq(min(LAPLACEDIST), max(LAPLACEDIST), length.out = 1000)
+Laplace_pdf <- (1 / (2 * kappa)) * exp(-abs(x_grid - m) / kappa)
+
+hist(LAPLACEDIST, breaks = 60, probability = TRUE, main = "Laplace(μ=2, κ=3)", xlab="")
+lines(x_grid, Laplace_pdf, col = "red", lwd = 2)

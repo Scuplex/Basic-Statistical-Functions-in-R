@@ -1,61 +1,36 @@
-# Statistical Distributions and Monte Carlo Simulation in R
+# Inverse CDF for Distributions in R: Sampling and PDF Validation
 
-This repository contains R scripts for exploring various methods of random number generation, primarily focusing on the **Inverse Cumulative Distribution Function (Inverse CDF)** technique for several common and specialized probability distributions.
+This repository contains an R script (`InverseCDF_dists.R`) dedicated to exploring and validating the **Inverse Cumulative Distribution Function (Inverse CDF)** method for generating random variates from various probability distributions.
 
-Additionally, it includes two distinct implementations of the **Monte Carlo method** to estimate the mathematical constant $\pi$ (pi).
+The key feature of this script is the visual validation: it generates a large sample from the target distribution using the Inverse CDF method and then overlays the **theoretical Probability Density Function (PDF)** to confirm the accuracy of the sampling technique.
 
-## 1. Inverse CDF Method for Random Number Generation
+## 1. Inverse CDF Sampling & PDF Overlay
 
-The script implements the Inverse CDF method to generate random variates from a standard uniform distribution $U \sim \mathcal{U}(0, 1)$.
+The script generates $10^7$ random numbers ($U \sim \mathcal{U}(0, 1)$) and transforms them using the Inverse CDF formula specific to each distribution. The resulting empirical distribution is plotted as a histogram, with the corresponding theoretical PDF plotted as a red line overlay.
 
-The following distributions are modeled using their respective Inverse CDF formulas:
+The following distributions are implemented and validated:
 
-| Distribution | Purpose | 
- | ----- | ----- | 
-| **Exponential** | Used for modeling the time until an event occurs. | 
-| **Pareto** | Often used in economics to model wealth distribution, characterized by heavy tails. | 
-| **Power-Utility Function** | A custom distribution derived from a power-utility function. | 
-| **Beta (Custom)** | A non-standard $\sin^2$ transformation of the uniform distribution for experimentation. | 
-| **Cauchy** | A heavy-tailed distribution known for having an undefined mean and variance. | 
+| Distribution | Parameters Used | Sampling Method | Validation Focus |
+| :--- | :--- | :--- | :--- |
+| **Exponential** | $\lambda = 0.1$ | Inverse CDF | Time until an event occurs. |
+| **Pareto** | $\alpha = 20, \sigma = 1$ | Inverse CDF | Heavy-tailed distribution (wealth modeling). |
+| **Power-Utility** | $\kappa = 5, \delta = 2$ | Inverse CDF | Distribution derived from a utility function. |
+| **Beta (Custom)** | $\text{Implied } \alpha=1/2, \beta=1/2$ | $\sin^2$ transformation | Demonstrates non-standard Beta forms. |
+| **Cauchy** | $m=1, \kappa=2$ | Inverse CDF | Heavy tails, truncated for visualization (`|X| \le 30$). |
+| **Laplace** | $\mu=2, \kappa=3$ | Sum of Exponentials (Alternative) | Uses transformation of two independent Exponential variables. |
 
 ### R Implementation Details
 
-Each section of the script generates a large number of uniform random numbers (`runif(1e5)` or `runif(1e6)`) and transforms them using the inverse CDF formula to produce the target distribution. The resulting distributions are then visualized using the `hist()` function.
+* The `par(mfrow = c(2, 3))` command is used to display all six validation plots simultaneously in a single image output.
+* For each distribution, the `hist()` function is used with `prob = TRUE` (density plotting) to correctly scale the histogram bars for comparison with the theoretical PDF line (`lines()`).
 
-## 2. Monte Carlo Estimation of $\pi$
-
-The repository includes two classic Monte Carlo methods for estimating the value of $\pi$.
-
-### Monte Carlo I (Integration Method)
-
-This method estimates $\pi$ by calculating the expected value of a function related to the integral:
-
-$$
-\pi = \int_{0}^{1} \frac{1}{\sqrt{x(1-x)}} \, dx
-$$
-
-The script uses the formula $h(U) = \frac{1}{\sqrt{U(1-U)}}$ and calculates the average $\text{mean}(h(U))$ over $M = 10^6$ steps.
-
-### Monte Carlo II (Geometric Method / Dartboard)
-
-This method estimates $\pi$ geometrically by generating $M$ random points $(X, Y)$ within a $2 \times 2$ square and checking how many fall within the inscribed unit circle ($X^2 + Y^2 \le 1$).
-
-The estimation is calculated as:
-
-$$
-\pi \approx 4 \times \frac{\text{Number of points inside circle}}{\text{Total number of points (M)}}
-$$
-
-## 3. Lognormal Distribution Analysis
-
-The script also contains an analysis of the **Lognormal Distribution** by exponentiating standard normal variates. It calculates and prints the empirical mean, variance, and skewness of the resulting lognormal sample.
-
-## 🚀 How to Run the Script
+## 2. How to Run the Script
 
 You need to have **R** installed on your system to run the analysis.
 
-1. **Clone the repository:**
+1. **Save the file:** Ensure the file is saved as `InverseCDF_dists.R`.
+
+2. **Run the R script from your terminal:**
 
    ```bash
-   git clone [https://github.com/YourUsername/YourRepoName.git](https://github.com/YourUsername/YourRepoName.git)
-   cd YourRepoName
+   Rscript InverseCDF_dists.R
